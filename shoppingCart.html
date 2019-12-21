@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>shoppingCart</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+    }
+    
+    header {
+        background-color: #fff;
+        height: 50px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-bottom: 1px solid #ccc;
+        line-height: 50px;
+        text-align: center;
+        font-size: 25px;
+        z-index: 999;
+        width: 100%;
+    }
+    
+    .container {
+        background-color: #fff;
+        padding: 50px 0;
+    }
+    
+    .container>.item+.item {
+        border-top: 1px solid #ccc;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        height: 40px;
+    }
+    
+    .logo img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .logo title {
+        color: #888;
+        padding-left: 10px;
+        font-size: 12px;
+    }
+    
+    .details {
+        display: flex;
+        width: calc(100vw - 40px);
+        padding: 10px;
+        font-size: 15px;
+        background-color: #f5f5f5;
+    }
+    
+    .details img {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .detail-list {
+        padding-left: 10px;
+    }
+    
+    .detail-list .more {
+        padding: 5px 0;
+    }
+    
+    .detail-list .more span {
+        display: block;
+        color: #ccc;
+        padding: 1px 0;
+    }
+    
+    .detail-list .price {
+        font-size: 20px;
+    }
+    
+    .num {
+        display: flex;
+        padding: 10px;
+        justify-content: space-between;
+    }
+    
+    .num span {
+        color: #888;
+    }
+    
+    .num button {
+        width: 30px;
+        height: 25px;
+        background-color: #e0e0e0;
+        color: #58595b;
+        border: none;
+        outline: none;
+    }
+    
+    .num input {
+        width: 37px;
+        height: 25px;
+        border: none;
+        text-align: center;
+        background-color: #fff;
+    }
+    
+    footer {
+        background-color: #fff;
+        height: 50px;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        border-top: 1px solid #ccc;
+        width: 100%;
+        font-size: 25px;
+        line-height: 50px;
+        z-index: 999;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .footer-left {
+        flex: 1;
+        text-align: right;
+        line-height: 50px;
+        font-size: 20px;
+        padding-right: 20px;
+    }
+    
+    .footer-left span {
+        color: salmon;
+    }
+    
+    .footer-right {
+        height: 50px;
+        width: 50%;
+        color: white;
+        background-color: salmon;
+        line-height: 50px;
+        text-align: center;
+    }
+    
+    .mint-cell-swipe-button {
+        line-height: 197px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <header>shoppingCard</header>
+
+        <div class="container" v-if="itemCard.length!=0">
+            <div class="item" v-for="(item,index) in itemCard" :key="index">
+                <mt-cell-swipe :right="[
+                {
+                  content: 'Delete',
+                  style: { background: 'red', color: '#fff' },
+                  handler: () => del(index)
+                }
+              ]">
+
+                    <div>
+                        <div class="logo">
+                            <img :src="item.logoImg" alt="商家图片">
+                            <span>{{item.logoTitle}}</span>
+                        </div>
+                        <div class="details">
+                            <img :src="item.img" alt="商品图片">
+                            <div class="detail-list">
+                                <div class="title">{{item.title}}</div>
+                                <div class="more">
+                                    <span>{{item.sort}}</span>
+                                    <span>{{item.size}}</span>
+                                </div>
+                                <div class="price">{{item.price}}</div>
+                            </div>
+                        </div>
+                        <div class="num">
+                            <span>购买数量：</span>
+                            <div class="num_btn">
+                                <button @click="numChange(false,index)">-</button>
+                                <input type="text" :value="item.num">
+                                <button @click="numChange(true,index)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </mt-cell-swipe>
+
+            </div>
+        </div>
+        <div class="container" v-else>
+            here is empty~
+        </div>
+        <footer>
+            <div class="footer-left">
+                total:<span>${{total}}</span>
+            </div>
+            <div class="footer-right">
+                Pay Now
+            </div>
+        </footer>
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                total: 0,
+                itemCard: [{
+                    id: 0,
+                    logoImg: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910412172&di=22283646b92ce23f8454e2e9e6f2baeb&imgtype=0&src=http%3A%2F%2Fcdn.duitang.com%2Fuploads%2Fitem%2F201608%2F11%2F20160811181530_5uhti.jpeg",
+                    logoTitle: "Business001",
+                    img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910520504&di=3698e5cb033d026f8254efbad4991997&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201603%2F19%2F20160319170153_2iGcz.thumb.700_0.png",
+                    title: "Commodity",
+                    sort: "color:blue",
+                    size: "size:7",
+                    price: 77.77,
+                    num: 1
+                }, {
+                    id: 1,
+                    logoImg: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910412172&di=22283646b92ce23f8454e2e9e6f2baeb&imgtype=0&src=http%3A%2F%2Fcdn.duitang.com%2Fuploads%2Fitem%2F201608%2F11%2F20160811181530_5uhti.jpeg",
+                    logoTitle: "Business002",
+                    img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910520504&di=3698e5cb033d026f8254efbad4991997&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201603%2F19%2F20160319170153_2iGcz.thumb.700_0.png",
+                    title: "Commodity",
+                    sort: "color:salmon",
+                    size: "size:77",
+                    price: 777.7,
+                    num: 1
+                }, {
+                    id: 2,
+                    logoImg: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910412172&di=22283646b92ce23f8454e2e9e6f2baeb&imgtype=0&src=http%3A%2F%2Fcdn.duitang.com%2Fuploads%2Fitem%2F201608%2F11%2F20160811181530_5uhti.jpeg",
+                    logoTitle: "Business003",
+                    img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910520504&di=3698e5cb033d026f8254efbad4991997&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201603%2F19%2F20160319170153_2iGcz.thumb.700_0.png",
+                    title: "Commodity",
+                    sort: "color:green",
+                    size: "size:777",
+                    price: 7.77,
+                    num: 1
+                }, {
+                    id: 3,
+                    logoImg: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910412172&di=22283646b92ce23f8454e2e9e6f2baeb&imgtype=0&src=http%3A%2F%2Fcdn.duitang.com%2Fuploads%2Fitem%2F201608%2F11%2F20160811181530_5uhti.jpeg",
+                    logoTitle: "Business004",
+                    img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576910520504&di=3698e5cb033d026f8254efbad4991997&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201603%2F19%2F20160319170153_2iGcz.thumb.700_0.png",
+                    title: "Commodity",
+                    sort: "color:white",
+                    size: "size:7777",
+                    price: 0.77,
+                    num: 1
+                }]
+            },
+
+            methods: {
+                getTotal() {
+                    let price = 0;
+                    this.itemCard.forEach((item, index) => {
+                        price += item.price * item.num
+                    });
+                    this.total = price.toFixed(2)
+                },
+                numChange(add, index) {
+                    if (add) {
+                        this.itemCard[index].num++;
+                    } else {
+                        if (this.itemCard[index].num == 1) {
+                            return
+                        }
+                        this.itemCard[index].num--;
+                    }
+                    this.getTotal()
+                },
+                del(index) {
+                    this.itemCard.splice(index, 1)
+                    this.getTotal()
+                }
+            },
+            mounted() {
+                this.getTotal()
+            },
+            updated() {
+                this.getTotal()
+            },
+        })
+    </script>
+</body>
+
+</html>
