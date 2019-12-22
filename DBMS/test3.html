@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>实验三</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>实验三：模糊查询</h2>
+        <div class="left">
+            <h2>结果显示列表</h2>
+            <iframe frameborder="0" name="myframe" style="width: 100%; height: 100%;"></iframe>
+
+        </div>
+        <div class="right">
+            <form action="search.php" method="GET" target="myframe">
+                <h2>输入家庭地址</h2>
+                <input id="s" type="text" name="addr">
+
+                <input id="submit" type="submit" value="查询">
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById("submit").click();
+    </script>
+    <!-- 样式表，用于美化页面 -->
+    <style>
+        .container {
+            font-size: 20px;
+            margin: 50px auto;
+            width: 1000px;
+            height: 650px;
+            padding: 0 50px 50px 50px;
+            background-color: #F5F5F5;
+            overflow: auto;
+        }
+        
+        .left,
+        .right {
+            float: left;
+            height: 500px;
+            width: 400px;
+            margin-right: 50px;
+            background-color: #fff;
+        }
+        
+        input {
+            width: 100%;
+            height: 50px;
+            margin-top: 20px;
+            font-size: inherit;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+        }
+    </style>
+
+
+</html>
